@@ -2,7 +2,8 @@
 
 ## Whats it is
 
-A project, specification and some implementation, to monitor some sensors and save the data, leveraging MQTT, FOG and Cloud. Some extras: REST API and Visualization.
+A very simple yet functional framework to monitor environment conditions using IOT.
+Applying MQTT for communication, a gateway as a FOG component and a layer of applications: storage, REST API and visualization.
 
 ## Dependencies
 
@@ -11,6 +12,7 @@ A project, specification and some implementation, to monitor some sensors and sa
 
 - middleware
     - mosquitto (https://mosquitto.org/)
+    - paho-mqtt (http://www.eclipse.org/paho/clients/python/)
 
 - application
     - MongoDB (https://www.mongodb.com/)
