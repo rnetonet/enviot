@@ -4,19 +4,21 @@ import time
 
 import paho.mqtt.client as paho
 
+import plugins_support
+
 this_module_path = os.path.split(__file__)[0]
 config_file = os.path.join(this_module_path, "middleware.ini")
 
 config = configparser.ConfigParser()
 config.read(config_file)
 
+plugins = plugins_support.get_plugins()
+
 
 def on_message(client, userdata, message):
-    print("------------------------------")
-    print("topic: %s" % message.topic)
-    print(message.payload.decode("utf8"))
-    print("qos: %d" % message.qos)
-    print("------------------------------")
+    payload_decoded = message.payload.decode("utf8")
+    for plugin in plugins:
+        plugin.handle(payload_decoded)
 
 
 client = paho.Client()

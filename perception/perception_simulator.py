@@ -28,8 +28,10 @@ while True:
     hour_end = f"{current_hour:02}:59"
     data = df.between_time(hour_start, hour_end)
 
-    payload = data.sample().to_json(orient="records")
+    payload = data.sample()
+    payload["client_id"] = config["perception"]["client_id"]
     
+    payload = payload.to_json(orient="records")
     client.publish(f"enviot/notify", payload)
 
     time.sleep(config.getint("perception", "interval", fallback=30))

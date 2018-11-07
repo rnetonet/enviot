@@ -2,8 +2,21 @@
 
 ## Whats it is
 
-A very simple yet functional framework to monitor environment conditions using IOT.
-Applying MQTT for communication, a gateway as a FOG component and a layer of applications: storage, REST API and visualization.
+A very simple, yet functional, framework to monitor environment conditions using IOT.
+Split in three layers:
+
+**Perception**
+- Data collection from sensors
+
+**Middleware**
+- Intermediary storage
+- Communcation with application layer
+for data intermediary storage and communication with the application layer;
+
+**Application**
+- Storage
+- Visualization
+- REST API
 
 ## Dependencies
 
