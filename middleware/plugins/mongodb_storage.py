@@ -16,7 +16,7 @@ except ServerSelectionTimeoutError:
 
 if connected:
 
-    def handle(payload_decoded):
+    def handle(payload_decoded, config=None):
         doc_json = json.loads(payload_decoded)[0]
         doc = client.enviot.data.insert_one(doc_json)
         logger.info(f"Saved new doc on mongodb: {doc.inserted_id}")
@@ -24,5 +24,5 @@ if connected:
 
 else:
 
-    def handle(payload_decoded):
+    def handle(payload_decoded, config=None):
         logger.error(f"Can´t connect to mongodb")

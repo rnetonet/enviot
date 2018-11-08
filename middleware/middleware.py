@@ -27,7 +27,7 @@ for plugin_name in plugin_source.list_plugins():
 def on_message(client, userdata, message):
     payload_decoded = message.payload.decode("utf8")
     for plugin in plugins:
-        plugin.handle(payload_decoded)
+        plugin.handle(payload_decoded, config=config)
 
 
 # Paho setup

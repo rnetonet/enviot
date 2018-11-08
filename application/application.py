@@ -26,6 +26,6 @@ for plugin_name in plugin_source.list_plugins():
 
 # Start each plugin (main function) into its own process
 for plugin in plugins:
-    proc = multiprocessing.Process(name=str(plugin), target=plugin.main)
+    proc = multiprocessing.Process(name=str(plugin), target=plugin.main, args=(config,))
     proc.start()
     proc.join()
