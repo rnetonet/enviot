@@ -1,9 +1,10 @@
 # EnvIOT
 
-## Whats it is
+## What it is ?
 
-A very simple, yet functional, framework to monitor environment conditions using IOT.
-Split in three layers:
+EnvIOT is very simple, yer fully functional, framework to monitor environment conditions using IOT solutions.
+
+It´s divided in three big layers:
 
 **Perception**
 - Data collection from sensors

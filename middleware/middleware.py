@@ -1,5 +1,6 @@
 import configparser
 import os
+import threading
 
 import paho.mqtt.client as paho
 from pluginbase import PluginBase
@@ -27,7 +28,8 @@ for plugin_name in plugin_source.list_plugins():
 def on_message(client, userdata, message):
     payload_decoded = message.payload.decode("utf8")
     for plugin in plugins:
-        plugin.handle(payload_decoded, config=config)
+        thread = threading.Thread(target=plugin.handle, args=(payload_decoded, config))
+        thread.start()
 
 
 # Paho setup
