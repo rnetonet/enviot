@@ -2,7 +2,7 @@
 
 ## What it is ?
 
-EnvIOT is very simple, yer fully functional, framework to monitor environment conditions using IOT solutions.
+**EnvIOT** is a very simple, yet fully functional, framework to monitor environment conditions using IOT solutions.
 
 It´s divided in three big layers:
 
@@ -45,14 +45,14 @@ Install the required packages:
 pip install -r requirements.txt
 ```
 
-Also, install **MongoDB**, follow this guide: 
+Also, to install **MongoDB**, required by `middleware` and `application`, follow this guide: 
 
 [https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 
 ## Usage
 
 
-Before starting each layer, you will need to `activate` the `virtualenv`. Inside the project folder:
+Before starting each layer, you will need to `activate` the `virtualenv`, inside the project folder:
 
 ```
 source .venv/bin/activate
@@ -68,11 +68,11 @@ source .venv/bin/activate
 [D 181109 10:16:32 fog_storage_mongodb:37] Loaded
 ```
 
-The messages are the loaded plugins: fog temporary storage plugin and a fog to cloud sync plugin.
+The messages are from the loaded plugins: a *fog temporary storage plugin* and a *fog to cloud sync plugin*.
 
 ### Start the Perception layer
 
-Actually the perception module simulates data collection using a historical dataset.
+Actually, the perception module simulates data collection using a historical dataset.
 
 ```
 (.venv) rnetonet@T440s:~/Workspace/enviot$ python perception/perception_simulator.py 
@@ -95,3 +95,7 @@ It will start sending requests to the `broker` (middleware).
 ```
 
 You can test the application layer through the REST service links, example: [http://localhost:5000/?count:int=10](http://localhost:5000/?count:int=10) (*The REST application supports some simple queries*).
+
+# Configuration
+
+Each layer has a `.ini` file, where you can configure its settings.
