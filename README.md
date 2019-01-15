@@ -1,101 +1,137 @@
-# EnvIOT
+# Roteiro - Implantação MATE84 - Projeto EnvIOT
 
-## What it is ?
+## Pré-requisitos
 
-**EnvIOT** is a very simple, yet fully functional, framework to monitor environment conditions using IOT solutions.
+Em todas máquinas envolvidas, você precisará do Python 3 e do `pip` instalado ([https://pip.pypa.io/en/stable/installing/](https://pip.pypa.io/en/stable/installing/)).
 
-It´s divided in three big layers:
 
-**Perception**
-- Data collection from sensors
+## Coleta
 
-**Middleware**
-- Intermediary storage
-- Periodic transfer of data to the cloud
+Foram utilizados dois dispositivos de coleta durante o semestre de 2018.2. 
 
-**Application**
-- Storage
-- REST API
-- Visualization
+Inicialmente, uma placa NodeMCU, cuja documentação de setup pode ser vista em [NodeMCU](NodeMCU.md).
 
-## Setup
+Contudo, oficialmente, optou-se por utilizar o dispositivo **SonOFF**, cujo setup detalharemos a seguir.
 
-Install `pip` and `virtualenv`:
+
+## Middleware - FOG
+
+* Instale o `MongoDB`, siga as instruções em [https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+
+* Inicie o servidor MongoDB
 
 ```
-sudo python3 -m pip install --upgrade pip
-sudo python3 -m pip install --upgrade virtualenv
+service mongod start
 ```
 
-Inside the project folder, create a `virtualenv`:
+* Instale o `mosquitto`:
 
 ```
-python3 -m virtualenv .venv
+sudo apt-get install mosquitto mosquitto-clients
 ```
 
-Activate the `virtualenv`:
+* Crie um arquivo de configuração padrão para o mosquitto:
 
 ```
-source .venv/bin/activate
+root@localhost:/opt/enviot# vim /etc/mosquitto/conf.d/default.conf 
 ```
 
-Install the required packages:
+Com o conteúdo:
 
 ```
-pip install -r requirements.txt
+listener 1883 0.0.0.0
 ```
 
-Also, to install **MongoDB**, required by `middleware` and `application`, follow this guide: 
-
-[https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
-
-## Usage
-
-
-Before starting each layer, you will need to `activate` the `virtualenv`, inside the project folder:
+* Reinicie o serviço do mosquitto:
 
 ```
-source .venv/bin/activate
+service mosquitto restart
 ```
 
-### Start the Middleware layer
-
-`python middleware/middleware.py`
+* Faça uma cópia do projeto `enviot` em `/opt/`. Use `git` ou `scp`
 
 ```
-(.venv) rnetonet@T440s:~/Workspace/enviot$ python middleware/middleware.py 
-[D 181109 10:16:32 cloud_storage_mongodb:54] Loaded
-[D 181109 10:16:32 fog_storage_mongodb:37] Loaded
+$/opt/enviot# ls
+application  middleware  perception  README.md  requirements.txt
 ```
 
-The messages are from the loaded plugins: a *fog temporary storage plugin* and a *fog to cloud sync plugin*.
+> Certifique-se que você executará os próximos passos estando na pasta `/opt/enviot`
 
-### Start the Perception layer
-
-Actually, the perception module simulates data collection using a historical dataset.
+* Instale o `pip`:
 
 ```
-(.venv) rnetonet@T440s:~/Workspace/enviot$ python perception/perception_simulator.py 
-[I 181109 10:21:44 perception_simulator:49] Sent: [{"reading_time":1528625503000,"temperature":27.0,"humidity":74.0,"count":1,"sound":487,"luminosity":1024,"client_id":"lab408"}]
-[I 181109 10:21:49 perception_simulator:49] Sent: [{"reading_time":1532515576000,"temperature":26.0,"humidity":62.0,"count":16,"sound":490,"luminosity":294,"client_id":"lab408"}]
+apt-get install python3-minimal python3-dev
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
 ```
 
-It will start sending requests to the `broker` (middleware).
-
-## Start the Application layer
+* Instale os requisitos do `enviot`:
 
 ```
-(.venv) rnetonet@T440s:~/Workspace/enviot$ python application/application.py 
-[I 181109 10:27:07 rest:50] Loaded
- * Serving Flask app "pluginbase._internalspace._sp3e3d038c35cb8f10c62e7f9831b89267.rest" (lazy loading)
- * Environment: production
-   WARNING: Do not use the development server in a production environment.
-   Use a production WSGI server instead.
- * Debug mode: off
+pip install -r requirements.txt 
 ```
 
-You can test the application layer through the REST service links, example: [http://localhost:5000/?count:int=10](http://localhost:5000/?count:int=10) (*The REST application supports some simple queries*).
+* Parametrize corretamente o arquivo `middleware.ini`, dentro da pasta `middleware`
 
-# Configuration
+* Inicie o serviço do `middleware` em *background*:
 
-Each layer has a `.ini` file, where you can configure its settings.
+```
+root@localhost:/opt/enviot# pwd
+/opt/enviot
+
+root@localhost:/opt/enviot# nohup python3 middleware/middleware.py &
+[1] 7140
+```
+
+* Cada um dos plugins irá produzir um arquivo `nome.log`, são dois plugins principais. Um de armazenamento local e coleta com o sonoff, `sonoff` e outro de sincronização com a nuvem, `cloud_sync`.
+
+## Camada de Aplicação - Nuvem
+
+* Instale o `MongoDB`, siga as instruções em [https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+
+* Inicie o servidor MongoDB
+
+* Faça uma cópia do projeto `enviot` em `/opt/`. Use `git` ou `scp`
+
+```
+$/opt/enviot# ls
+application  middleware  perception  README.md  requirements.txt
+```
+
+> Certifique-se que você executará os próximos passos estando na pasta `/opt/enviot`
+
+* Instale o `pip`:
+
+```
+apt-get install python3-minimal python3-dev
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
+```
+
+* Instale os requisitos do `enviot`:
+
+```
+pip install -r requirements.txt 
+```
+
+* Parametrize o arquivo `web/web.ini`
+
+* Realizados os passos, o último passo de execução,  dentro da pasta `/opt/enviot`:
+
+```
+nohup python3 application/web/web.py &
+```
+
+* Será disponibilizado uma interface gráfica no ip `0.0.0.0` (`localhost` e o ip público da máquina), na porta `80`.
+
+## SonOFF
+
+O SonOFF deve ser configurado realizando os passos descritos na página `13` da documentação [PlataformaSOFT-IoT](PlataformaSOFT-IoT.pdf).
+
+- O nome do device deve ser o mesmo parametrizado no *middleware*. 
+- O servidor MQTT deverá ser o IP do *middleware*.
+- O servidor MQTT dispensa login e senha.
+
+Verifique o início da coleta analisando os logs do *middleare* e do *application*.
+
+

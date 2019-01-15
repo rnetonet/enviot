@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+      crossorigin="anonymous"
+    />
+
+    <title>EnvIOT</title>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+
+      <div class="row my-3">
+          <div class="col-10"><h3>EnvIOT</h3></div>
+          <div class="col-2 align-middle"><a href="/download"><button type="button" class="btn btn-primary w-100">Download</button></a></div>
+      </div>
+
+
+      <div class="card my-3">
+        <div class="card-body">
+            <h5 class="card-title">Last</h5>
+            <p class="card-text">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <th>Client</th>
+                    <th>Time</th>
+                    <th>Temperature</th>
+                    <th>Humidity</th>
+                    <th>Sound</th>
+                    <th>Luminosity</th>
+                    <th>Dust</th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ latest.client_id }}</td>
+                    <td>{{ latest._id.generation_time | datetime }}</td>
+                    <td>{{ latest.temperatureSensor }}</td>
+                    <td>{{ latest.humiditySensor }}</td>
+                    <td>{{ latest.soundSensor }}</td>
+                    <td>{{ latest.luminositySensor }}</td>
+                    <td>{{ latest.dustSensor }}</td>
+                </tr>
+                </tbody>
+            </table>
+            </p>
+        </div>
+      </div>
+
+      <div class="card my-3">
+        <div class="card-body">
+            <h5 class="card-title">Last 30 days</h5>
+            <p class="card-text">
+                <div id="last_thirty_days_temperature_graph" style="height:350px;"></div>
+                <div id="last_thirty_days_humidity_graph" style="height:350px;"></div>
+                <div id="last_thirty_days_sound_graph" style="height:350px;"></div>
+                <div id="last_thirty_days_luminosity_graph" style="height:350px;"></div>
+                <div id="last_thirty_days_dust_graph" style="height:350px;"></div>
+            </p>
+        </div>
+    </div>
+        
+    </div>
+    
+    <script>
+        last_thirty_days_temperature_graph = document.getElementById('last_thirty_days_temperature_graph');
+        last_thirty_days_humidity_graph = document.getElementById('last_thirty_days_humidity_graph');
+        last_thirty_days_sound_graph = document.getElementById('last_thirty_days_sound_graph');
+        last_thirty_days_luminosity_graph = document.getElementById('last_thirty_days_luminosity_graph');
+        last_thirty_days_dust_graph = document.getElementById('last_thirty_days_dust_graph');
+
+        var temperature = {
+            name: 'Temperature',
+            x: [],
+            y: [],
+            text: [],
+            mode: 'lines',
+            line: {color: 'red'}
+        };
+
+        var humidity = {
+            name: 'Humidity',
+            x: [],
+            y: [],
+            text: [],
+            mode: 'lines',
+            line: {color: 'orange'}
+        };
+
+        var sound = {
+            name: 'Sound',
+            x: [],
+            y: [],
+            text: [],
+            mode: 'lines',
+            line: {color: 'purple'}
+        };
+
+        var luminosity = {
+            name: 'Luminosity',
+            x: [],
+            y: [],
+            text: [],
+            mode: 'lines',
+            line: {color: 'yellow'}
+        };
+
+        var dust = {
+            name: 'Dust',
+            x: [],
+            y: [],
+            text: [],
+            mode: 'lines',
+            line: {color: 'brown'}
+        };
+
+        {% for doc in last_thirty_days %}
+            temperature.text.push("{{ doc._id | datetime }}");
+            humidity.text.push("{{ doc._id | datetime }}");
+            sound.text.push("{{ doc._id | datetime }}");
+            luminosity.text.push("{{ doc._id | datetime }}");
+            dust.text.push("{{ doc._id | datetime }}");
+
+            temperature.x.push("{{ doc._id | datetime }}");
+            humidity.x.push("{{ doc._id | datetime }}");
+            sound.x.push("{{ doc._id | datetime }}");
+            luminosity.x.push("{{ doc._id | datetime }}");
+            dust.x.push("{{ doc._id | datetime }}");
+
+            temperature.y.push({{ doc.temperatureSensor }});
+            humidity.y.push({{ doc.humiditySensor }});
+            sound.y.push({{ doc.soundSensor }});
+            luminosity.y.push({{ doc.luminositySensor }});
+            dust.y.push({{ doc.dustSensor }});
+        {% endfor %}
+
+        Plotly.newPlot(last_thirty_days_temperature_graph, [temperature], {title: "Temperature"});
+        Plotly.newPlot(last_thirty_days_humidity_graph, [humidity], {title: "Humidity"});
+        Plotly.newPlot(last_thirty_days_sound_graph, [sound], {title: "Sound"});
+        Plotly.newPlot(last_thirty_days_luminosity_graph, [luminosity], {title: "Luminosity"});
+        Plotly.newPlot(last_thirty_days_dust_graph, [dust], {title: "Dust"});
+    </script>
+  </body>
+</html>
